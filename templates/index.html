@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarValue AI — Used Car Price Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ─── NAVBAR ──────────────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🚗</span>
+    <span class="brand-name">CarValue <span class="brand-accent">AI</span></span>
+  </div>
+  <span class="nav-tagline">Powered by Machine Learning</span>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">India's Smart Car Valuator</p>
+    <h1 class="hero-title">Know Your Car's<br><span class="hero-highlight">True Market Price</span></h1>
+    <p class="hero-sub">Enter your car details below and get an instant AI-powered price estimate — no guesswork, no middlemen.</p>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">8</span><span class="stat-label">ML Models Compared</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num">95%+</span><span class="stat-label">Prediction Accuracy</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num">₹INR</span><span class="stat-label">Instant Valuation</span></div>
+  </div>
+</section>
+
+<!-- ─── FORM CARD ────────────────────────────────────────────────── -->
+<main class="main-content">
+  <div class="card form-card">
+    <div class="card-header">
+      <h2>Car Details</h2>
+      <p>Fill in all fields for the most accurate estimate.</p>
+    </div>
+
+    <form action="/predict" method="POST" class="predict-form" id="predictForm">
+
+      <!-- Row 1: Brand + Model -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="brand">Car Brand</label>
+          <select id="brand" name="brand" required>
+            <option value="" disabled selected>Select Brand</option>
+            <option>Maruti</option><option>Hyundai</option><option>Honda</option>
+            <option>Toyota</option><option>Ford</option><option>Volkswagen</option>
+            <option>Tata</option><option>Mahindra</option><option>Kia</option>
+            <option>MG</option><option>Renault</option><option>Nissan</option>
+            <option>Skoda</option><option>BMW</option><option>Mercedes-Benz</option>
+            <option>Audi</option><option>Jeep</option><option>Land</option>
+            <option>Datsun</option><option>Chevrolet</option><option>Fiat</option>
+            <option>Mitsubishi</option><option>Volvo</option><option>Jaguar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="model">Car Model</label>
+          <input type="text" id="model" name="model" placeholder="e.g. Swift, Creta, Nexon" required />
+        </div>
+      </div>
+
+      <!-- Row 2: Year + KM -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="year">Manufacturing Year</label>
+          <select id="year" name="year" required>
+            <option value="" disabled selected>Select Year</option>
+            {% for y in range(2024, 1999, -1) %}
+            <option value="{{ y }}">{{ y }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="km_driven">Kilometres Driven</label>
+          <input type="number" id="km_driven" name="km_driven"
+                 placeholder="e.g. 45000" min="0" max="1000000" required />
+        </div>
+      </div>
+
+      <!-- Row 3: Fuel + Seller -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fuel">Fuel Type</label>
+          <select id="fuel" name="fuel" required>
+            <option value="" disabled selected>Select Fuel</option>
+            <option>Petrol</option>
+            <option>Diesel</option>
+            <option>CNG</option>
+            <option>LPG</option>
+            <option>Electric</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="seller_type">Seller Type</label>
+          <select id="seller_type" name="seller_type" required>
+            <option value="" disabled selected>Select Seller</option>
+            <option>Individual</option>
+            <option>Dealer</option>
+            <option>Trustmark Dealer</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 4: Transmission + Ownership -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="transmission">Transmission</label>
+          <select id="transmission" name="transmission" required>
+            <option value="" disabled selected>Select Transmission</option>
+            <option>Manual</option>
+            <option>Automatic</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="owner">Ownership Type</label>
+          <select id="owner" name="owner" required>
+            <option value="" disabled selected>Select Ownership</option>
+            <option>First Owner</option>
+            <option>Second Owner</option>
+            <option>Third Owner</option>
+            <option>Fourth &amp; Above Owner</option>
+            <option>Test Drive Car</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 5: Mileage + Engine + Power + Seats -->
+      <div class="form-row form-row-4">
+        <div class="form-group">
+          <label for="mileage">Mileage <span class="unit">(km/l)</span></label>
+          <input type="number" id="mileage" name="mileage"
+                 placeholder="e.g. 18.5" step="0.1" min="0" max="100" required />
+        </div>
+        <div class="form-group">
+          <label for="engine">Engine <span class="unit">(cc)</span></label>
+          <input type="number" id="engine" name="engine"
+                 placeholder="e.g. 1197" min="500" max="10000" required />
+        </div>
+        <div class="form-group">
+          <label for="max_power">Max Power <span class="unit">(bhp)</span></label>
+          <input type="number" id="max_power" name="max_power"
+                 placeholder="e.g. 82.0" step="0.1" min="20" max="1000" required />
+        </div>
+        <div class="form-group">
+          <label for="seats">Seats</label>
+          <select id="seats" name="seats" required>
+            <option value="" disabled selected>Seats</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-submit">
+        <button type="submit" class="btn-predict" id="submitBtn">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">Predict Selling Price</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ─── HOW IT WORKS ──────────────────────────────────────────── -->
+  <div class="how-section">
+    <h3 class="how-title">How CarValue AI Works</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <strong>Enter Details</strong>
+          <p>Fill in your car's specifications using the form above.</p>
+        </div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <strong>ML Processing</strong>
+          <p>8 models were trained on thousands of real sales. The best is selected.</p>
+        </div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <strong>Instant Estimate</strong>
+          <p>Receive a data-backed price estimate in seconds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────── -->
+<footer class="footer">
+  <p>CarValue AI &mdash;  Built with Python, Flask &amp; Scikit-learn</p>
+</footer>
+
+<script>
+  document.getElementById("predictForm").addEventListener("submit", function () {
+    const btn = document.getElementById("submitBtn");
+    btn.classList.add("loading");
+    btn.querySelector(".btn-text").textContent = "Calculating…";
+    btn.disabled = true;
+  });
+</script>
+</body>
+</html>

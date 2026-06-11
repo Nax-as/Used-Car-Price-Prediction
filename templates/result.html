@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarValue AI — Price Estimate</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🚗</span>
+    <span class="brand-name">CarValue <span class="brand-accent">AI</span></span>
+  </div>
+  <span class="nav-tagline">Powered by Machine Learning</span>
+</nav>
+
+<main class="main-content result-main">
+
+  {% if error %}
+  <!-- ─── ERROR STATE ──────────────────────────────────────────── -->
+  <div class="card result-card error-card">
+    <div class="result-icon error-icon">⚠️</div>
+    <h2>Something went wrong</h2>
+    <p class="error-msg">{{ error }}</p>
+    <p class="error-hint">Please check that the trained model is present in <code>artifacts/</code>
+      and that all input fields are valid.</p>
+    <a href="/" class="btn-back">← Try Again</a>
+  </div>
+
+  {% else %}
+  <!-- ─── SUCCESS STATE ────────────────────────────────────────── -->
+  <div class="card result-card">
+    <div class="result-badge">AI Estimate</div>
+    <div class="result-icon">✅</div>
+    <p class="result-label">Estimated Selling Price</p>
+    <div class="result-price" id="priceDisplay">{{ price }}</div>
+    <p class="result-raw">Exact: {{ raw_price }}</p>
+
+    <div class="result-divider"></div>
+
+    <!-- Car summary -->
+    <h3 class="summary-title">Car Summary</h3>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <span class="s-label">Brand</span>
+        <span class="s-val">{{ car.brand }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Model</span>
+        <span class="s-val">{{ car.model }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Year</span>
+        <span class="s-val">{{ car.year }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">KM Driven</span>
+        <span class="s-val">{{ "{:,}".format(car.km_driven) }} km</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Fuel</span>
+        <span class="s-val">{{ car.fuel }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Transmission</span>
+        <span class="s-val">{{ car.transmission }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Ownership</span>
+        <span class="s-val">{{ car.owner }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Seller Type</span>
+        <span class="s-val">{{ car.seller_type }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Engine</span>
+        <span class="s-val">{{ car.engine }} cc</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Max Power</span>
+        <span class="s-val">{{ car.max_power }} bhp</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Mileage</span>
+        <span class="s-val">{{ car.mileage }} km/l</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-label">Seats</span>
+        <span class="s-val">{{ car.seats }}</span>
+      </div>
+    </div>
+
+    <div class="result-disclaimer">
+      ⓘ This is an AI-based estimate. Actual market price may vary by ±10–15%
+      depending on condition, location, and demand.
+    </div>
+
+    <div class="result-actions">
+      <a href="/" class="btn-back">← Predict Another Car</a>
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+
+<footer class="footer">
+  <p>CarValue AI &mdash;  Built with Python, Flask &amp; Scikit-learn</p>
+</footer>
+
+<script>
+  /* Animate price counter on load */
+  const el = document.getElementById("priceDisplay");
+  if (el) {
+    el.style.opacity = "0";
+    el.style.transform = "scale(0.8)";
+    requestAnimationFrame(() => {
+      el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+      el.style.opacity = "1";
+      el.style.transform = "scale(1)";
+    });
+  }
+</script>
+</body>
+</html>
